@@ -5,11 +5,11 @@ import os
 
 app = Flask(__name__)
 
-# إعدادات Zoho SMTP باستخدام متغيرات بيئية
+# ✅ استخدم متغيرات البيئة لتخزين البيانات الحساسة
 SMTP_SERVER = "smtp.zoho.com"
 SMTP_PORT = 587
-ZOHO_USER = os.getenv("brono0day@zohomail.com")  # يتم تخزينه في بيئة Render
-ZOHO_PASSWORD = os.getenv("ilyas.2020")  # يتم تخزينه في بيئة Render
+ZOHO_USER = os.getenv("ZOHO_EMAIL")  # ✅ يتم تخزينه في Render
+ZOHO_PASSWORD = os.getenv("ZOHO_PASSWORD")  # ✅ يتم تخزينه في Render
 
 @app.route("/send-email", methods=["POST"])
 def send_email():
@@ -17,6 +17,9 @@ def send_email():
     to_email = data.get("to_email", "recipient@example.com")
     subject = data.get("subject", "اختبار Zoho")
     content = data.get("content", "هذا هو محتوى البريد الإلكتروني.")
+
+    if not ZOHO_USER or not ZOHO_PASSWORD:
+        return jsonify({"status": "error", "message": "⚠ بيانات SMTP غير متوفرة في البيئة!"}), 500
 
     msg = MIMEText(content, "plain", "utf-8")
     msg["From"] = ZOHO_USER
@@ -29,9 +32,10 @@ def send_email():
         server.login(ZOHO_USER, ZOHO_PASSWORD)
         server.sendmail(ZOHO_USER, to_email, msg.as_string())
         server.quit()
-        return jsonify({"status": "success", "message": "تم إرسال البريد بنجاح!"})
+        return jsonify({"status": "success", "message": "✅ تم إرسال البريد بنجاح!"})
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 400
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=10000)
+    port = int(os.environ.get("PORT", 5000))  # ✅ استخدام منفذ Render
+    app.run(host="0.0.0.0", port=port)
