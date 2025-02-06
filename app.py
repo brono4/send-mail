@@ -9,8 +9,8 @@ app = Flask(__name__)
 # ✅ Use environment variables to protect login credentials
 SMTP_SERVER = "smtp.zoho.com"
 SMTP_PORT = 587
-ZOHO_USER = os.getenv("brono0day@zohomail.com")  # Must be set in environment variables
-ZOHO_PASSWORD = os.getenv("ilyas.2020")  # Must be set in environment variables
+ZOHO_USER = os.getenv("ZOHO_USER")  # Must be set in environment variables
+ZOHO_PASSWORD = os.getenv("ZOHO_PASSWORD")  # Must be set in environment variables
 
 # ✅ Custom function to return JSON without Unicode conversion
 def custom_jsonify(data, status=200):
